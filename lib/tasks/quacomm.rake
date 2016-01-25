@@ -72,7 +72,7 @@ task :scrape_asset_meta => :environment do
   csv_text = File.read(csv_path)
   urls = CSV.parse(csv_text)
   urls.each do |url|
-    unless url[1].to_i < 3321  
+    unless url[1].to_i < 3421  
       browser.goto url.first
       asset_meta = Hash.new
       asset_meta[:asset_id] = url[1]
