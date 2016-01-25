@@ -61,7 +61,7 @@ task :scrape_asset_meta => :environment do
   require 'csv'
   Watir.default_timeout = 240
   client = Selenium::WebDriver::Remote::Http::Default.new
-  client.timeout = 180 # seconds – default is 60
+  client.timeout = 240 # seconds – default is 60
   browser = Watir::Browser.new :firefox, :http_client => client
   browser.goto "http://brand.qualcomm.com/app/login/login.aspx"
   browser.forms.first.text_fields.first.value = "sarah.iskander@gateb.com"
