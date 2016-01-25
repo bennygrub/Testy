@@ -1,0 +1,31 @@
+<h1>Listing bells</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @bells.each do |bell| %>
+      <tr>
+        <td><%= bell.user_id %></td>
+        <td><%= bell.name %></td>
+        <td><%= bell.description %></td>
+        <td><%= link_to 'Show', bell %></td>
+        <td><%= link_to 'Edit', edit_bell_path(bell) %></td>
+        <td><%= link_to 'Destroy', bell, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Bell', new_bell_path %>

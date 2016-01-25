@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>User:</strong>
+  <%= @bell.user_id %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @bell.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @bell.description %>
+</p>
+
+<%= link_to 'Edit', edit_bell_path(@bell) %> |
+<%= link_to 'Back', bells_path %>
