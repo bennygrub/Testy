@@ -59,7 +59,7 @@ end
 task :scrape_asset_meta => :environment do
   require 'watir-webdriver'
   require 'csv'
-  browser = Watir::Browser.new :chrome
+  browser = Watir::Browser.new :firefox 
   browser.goto "http://brand.qualcomm.com/app/login/login.aspx"
   browser.forms.first.text_fields.first.value = "sarah.iskander@gateb.com"
   browser.forms.first.text_fields[2].value = "gateB90024.."
@@ -69,7 +69,7 @@ task :scrape_asset_meta => :environment do
   csv_text = File.read(csv_path)
   urls = CSV.parse(csv_text)
   urls.each do |url|
-    unless url[1].to_i < 3220  
+    unless url[1].to_i < 3321  
       browser.goto url.first
       asset_meta = Hash.new
       asset_meta[:asset_id] = url[1]
