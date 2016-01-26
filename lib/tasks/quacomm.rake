@@ -61,18 +61,26 @@ task :scrape_asset_meta => :environment do
   require 'csv'
   Watir.default_timeout = 240
   client = Selenium::WebDriver::Remote::Http::Default.new
+  profile = Selenium::WebDriver::Firefox::Profile.new
+  download_directory = "/Volumes/EXTERNAL HD/Qualcomm Assets"
+  profile['browser.download.dir'] = download_directory
+  profile['browser.helperApps.neverAsk.saveToDisk'] = "text/csv,application/application/pdf/text/html"
+
+
+
   client.timeout = 240 # seconds – default is 60
-  browser = Watir::Browser.new :firefox, :http_client => client
+  browser = Watir::Browser.new :firefox, :http_client => client, :profile => profile
   browser.goto "http://brand.qualcomm.com/app/login/login.aspx"
   browser.forms.first.text_fields.first.value = "sarah.iskander@gateb.com"
   browser.forms.first.text_fields[2].value = "gateB90024.."
   browser.link(id: "ctl00_contentPage_btnLogin").click
+  #browser.link(id: "ctl00_contentPage_ucAssetFileInfo_ibtnTriggerModal").click
   #browser.links(title: "Assets").when_present
   csv_path = Rails.root.join("public", "qualcomm-assets-urls.csv")
   csv_text = File.read(csv_path)
   urls = CSV.parse(csv_text)
   urls.each do |url|
-    unless url[1].to_i < 3421  
+    unless url[1].to_i < 1 
       browser.goto url.first
       asset_meta = Hash.new
       asset_meta[:asset_id] = url[1]
@@ -112,5 +120,50 @@ task :csv_test => :environment do
   urls.each do |url|
     binding.pry
 
+  end
+end
+
+task :scrape_assets => :environment do
+  require 'watir-webdriver'
+  require 'csv'
+  require 'fileutils'
+  #Watir.default_timeout = 240
+  client = Selenium::WebDriver::Remote::Http::Default.new
+  client.timeout = 240 # seconds – default is 60
+  profile = Selenium::WebDriver::Firefox::Profile.new
+  download_directory = "/Users/GateB/Downloads"
+  profile['browser.download.dir'] = download_directory
+  profile['browser.helperApps.neverAsk.saveToDisk'] = "text/csv,application/application/pdf/text/html"
+
+  
+  browser = Watir::Browser.new :firefox, :http_client => client, :profile => profile
+  browser.goto "http://brand.qualcomm.com/app/login/login.aspx"
+  browser.forms.first.text_fields.first.value = "sarah.iskander@gateb.com"
+  browser.forms.first.text_fields[2].value = "gateB90024.."
+  browser.link(id: "ctl00_contentPage_btnLogin").click
+  #browser.link(id: "ctl00_contentPage_ucAssetFileInfo_ibtnTriggerModal").click
+  #browser.links(title: "Assets").when_present
+  csv_path = Rails.root.join("public", "qualcomm-assets-urls.csv")
+  csv_text = File.read(csv_path)
+  urls = CSV.parse(csv_text)
+  urls.each do |url|
+    unless url[1].to_i < 1
+      file_name = nil
+      downloads_before = Dir.entries(download_directory)
+      browser.goto url.first
+      browser.link(id: "ctl00_contentPage_ucAssetFileInfo_ibtnTriggerModal").click
+      60.times do
+        difference = Dir.entries(download_directory) - downloads_before
+        if difference.size == 1
+          file_name = difference.first
+          file_extention = file_name.split('.').last
+          File.rename("#{download_directory}/#{file_name}","#{download_directory}/#{url[1]}.#{file_extention}")
+          FileUtils.mv("#{download_directory}/#{url[1]}.#{file_extention}", "/Volumes/EXTERNAL HD/Qualcomm Assets/#{url[1]}.#{file_extention}")
+          break
+        end 
+        sleep 1
+      end
+    end
+    sleep 20.seconds
   end
 end
