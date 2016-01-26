@@ -131,7 +131,8 @@ task :scrape_assets => :environment do
   client = Selenium::WebDriver::Remote::Http::Default.new
   client.timeout = 240 # seconds – default is 60
   profile = Selenium::WebDriver::Firefox::Profile.new
-  download_directory = "/Users/GateB/Downloads"
+  #download_directory = "/Users/GateB/Downloads"
+  download_directory = "/Users/bengruber/Downloads"
   profile['browser.download.dir'] = download_directory
   profile['browser.helperApps.neverAsk.saveToDisk'] = "text/csv,application/application/pdf/text/html"
 
@@ -147,23 +148,26 @@ task :scrape_assets => :environment do
   csv_text = File.read(csv_path)
   urls = CSV.parse(csv_text)
   urls.each do |url|
-    unless url[1].to_i < 1
+    begin
+      unless url[1].to_i < 1
       file_name = nil
       downloads_before = Dir.entries(download_directory)
       browser.goto url.first
       browser.link(id: "ctl00_contentPage_ucAssetFileInfo_ibtnTriggerModal").click
-      60.times do
+      40.times do
         difference = Dir.entries(download_directory) - downloads_before
         if difference.size == 1
           file_name = difference.first
           file_extention = file_name.split('.').last
           File.rename("#{download_directory}/#{file_name}","#{download_directory}/#{url[1]}.#{file_extention}")
-          FileUtils.mv("#{download_directory}/#{url[1]}.#{file_extention}", "/Volumes/EXTERNAL HD/Qualcomm Assets/#{url[1]}.#{file_extention}")
+          #FileUtils.mv("#{download_directory}/#{url[1]}.#{file_extention}", "/Volumes/EXTERNAL HD/Qualcomm Assets/#{url[1]}.#{file_extention}")
           break
         end 
         sleep 1
       end
     end
-    sleep 20.seconds
+    rescue
+      binding.pry
+    end
   end
 end
