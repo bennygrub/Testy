@@ -51,6 +51,7 @@ gem 'mechanize'
 gem 'awesome_print'
 gem 'watir-webdriver'
 gem 'pry'
+gem 'rmagick', '~> 2.15', '>= 2.15.4'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.1.2'
 
